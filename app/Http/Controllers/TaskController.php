@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return TaskResource::collection(Auth::user()->tasks);
+        return TaskResource::collection(Auth::user()->tasks()->latest(0)->paginate(5));
     }
 
     public function store(StoreTaskRequest $request)

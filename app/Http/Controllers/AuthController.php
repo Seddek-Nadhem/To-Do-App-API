@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest; // Import the new request
 use App\Http\Requests\LoginRequest;    // Import the new request
 use Illuminate\Support\Facades\Hash;
@@ -54,7 +55,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function logout(Rrequest $request) {
+    public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
