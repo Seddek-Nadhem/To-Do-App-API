@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
@@ -11,29 +12,28 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return TaskResource::collection(Task::all());
+        return TaskResource::collection(Auth::user()->tasks);
     }
 
     public function store(StoreTaskRequest $request)
     {
-        // Rule #1: This code ONLY runs if StoreTaskRequest validates the data successfully.
-        // If not, Laravel automatically stops here and returns 422.
+        $validated = $request->validated();
         
-        $task = Task::create($request->validated());
+        $task = Auth::user()->tasks()->create($validated);
         
         return new TaskResource($task);
     }
 
     public function show($id)
     {
-        // Rule #2: findOrFail throws a 404 error automatically if not found.
-        $task = Task::findOrFail($id);
+        $task = Auth::user()->tasks()->findOrFail($id);    
+
         return new TaskResource($task);
     }
 
     public function update(UpdateTaskRequest $request, $id)
     {
-        $task = Task::findOrFail($id);
+        $task = Auth::user()->tasks()->findOrFail($id);
         
         $task->update($request->validated());
         
@@ -42,7 +42,7 @@ class TaskController extends Controller
 
     public function destroy($id)
     {
-        $task = Task::findOrFail($id);
+        $task = Auth::user()->tasks()->findOrFail($id);
         
         $task->delete();
         
